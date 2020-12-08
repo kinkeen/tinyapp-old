@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-//const URL = ;
+//const URL = "https://www.tsn.ca";
 
 
 // set the view engine to ejs
@@ -60,8 +60,13 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.a/* What goes here? */ };
+  const templateVars = { shortURL: req.params.shortURL, longURL: "https://www.tsn.ca" /* What goes here? */ };
   res.render("urls_show", templateVars);
 });
+
 
