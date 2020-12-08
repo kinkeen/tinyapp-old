@@ -14,7 +14,6 @@ function generateRandomString() {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
    }
    return result;
-
 }
 
 
@@ -51,10 +50,6 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 })
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
 app.get("/set", (req, res) => {
   const a = 1;
   res.send(`a = ${a}`);
@@ -79,7 +74,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: "https://www.tsn.ca" /* What goes here? */ };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] /* What goes here? */ };
   res.render("urls_show", templateVars);
 });
 
@@ -89,3 +84,15 @@ app.post("/urls", (req, res) => {
 });
 
 
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
+
+
+
+
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL]
+  res.redirect(longURL);
+});
