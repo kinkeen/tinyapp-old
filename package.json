@@ -1,8 +1,6 @@
 {
-  "name": "tinyapp",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "node-ejs",
+  "main": "express_server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +16,7 @@
   },
   "homepage": "https://github.com/kinkeen/tinyapp#readme",
   "dependencies": {
+    "ejs": "^3.1.5",
     "express": "^4.17.1"
   },
   "devDependencies": {}
