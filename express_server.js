@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+//const URL = ;
 
 
 // set the view engine to ejs
@@ -49,8 +50,18 @@ app.get("/set", (req, res) => {
   res.send(`a = ${a}`);
  });
 
- app.get("/urls", (req, res) => {
+ app.get("/hello", (req, res) => {
+  const templateVars = { greeting: 'Hello World!' };
+  res.render("hello_world", templateVars);
+});
+
+app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
+});
+
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.a/* What goes here? */ };
+  res.render("urls_show", templateVars);
 });
 
