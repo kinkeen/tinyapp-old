@@ -1,8 +1,12 @@
 const express = require("express");
+const util = require('util');
+
 const app = express();
+var cookieParser = require('cookie-parser');
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 
 function generateRandomString() {
@@ -15,8 +19,6 @@ function generateRandomString() {
    }
    return result;
 }
-
-
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
@@ -39,28 +41,34 @@ const urlDatabase = {
 
 app.get("/urls.json", (req, res) => {
     res.json(urlDatabase);
-  });
+});
 
 app.get("/set", (req, res) => {
   const a = 1;
   res.send(`a = ${a}`);
  });
  
- app.get("/fetch", (req, res) => {
+app.get("/fetch", (req, res) => {
   res.send(`a = ${a}`);
  });
 
- app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+app.get("/urls", (req, res) => {
+   console.log("coockies.username", req.cookies["username"]);
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"]};
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+
+  const templateVars = {
+    username: req.cookies["username"],
+    // ... any other vars
+  };
+    res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] /* What goes here? */ };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL],username: req.cookies["username"]};
   res.render("urls_show", templateVars);
 });
 
@@ -68,7 +76,6 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]
   res.redirect(longURL);
 });
-
 
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
@@ -82,6 +89,62 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
+app.post("/urls/:shortURL/update", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  console.log("welcome");
+  console.log(req.params);
+  urlDatabase[req.params.shortURL] = req.body.longURL;
+  res.redirect("/urls");
+});
+
+app.get("/login", (req, res) => {
+  // console.log(util.inspect(req.headers.cookie, {showHidden: false, depth: 1}));
+ // const mycook = req.cookies['username'];
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls");
+});
+
+/*app.get("/logout", (req, res) => {
+
+  // console.log(util.inspect(req.headers.cookie, {showHidden: false, depth: 1}));
+ // const mycook = req.cookies['username'];
+});
+///app.get("/register", (req, res) => {});
+}*/
+
+app.post("/login", (req, res) => {
+  
+//console.log(req,res)
+  res.cookie("username", req.body.username);
+  
+  const templateVars = {
+    username: req.cookies["username"],
+    // ... any other vars
+  };
+  
+  res.render("/urls", templateVars);
+  res.redirect("/urls");
+  
+
+
+  //console.log("----" + req.headers.cookie["username"]);
+  //console.log(util.inspect(req.headers.cookie, {showHidden: false, depth: 1}))
+
+  //console.log("----" + req.cookie["username"]);
+  //console.log(req.cookies["username"]);
+  //templateVars["username"] =  req.cookies["username"];
+  /*const usernameCookies = req.cookies.username;
+  //res.cookie({username: req.body.username});
+  console.log(usernameCookies);*/
+  //console.log("login");
+  //console.log(req.params);
+  
+  //res.redirect("/urls");
+
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
